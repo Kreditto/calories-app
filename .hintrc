@@ -16,6 +16,12 @@
         "label": "off",
         "select-name": "off"
       }
+    ],
+    "axe/structure": [
+      "default",
+      {
+        "list": "off"
+      }
     ]
   }
 }

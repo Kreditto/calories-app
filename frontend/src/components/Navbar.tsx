@@ -26,9 +26,17 @@ const Navbar = () => {
                             <Link className="nav-link" to="/Profile">Профіль</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/recipes">
-                                Рецепти {role !== 'premium' && <span className="text-warning fw-bold"></span>}
+                             <Link className={`nav-link 
+                             ${role !== 'premium' ? 'text-warning fw-bold' : ''}`} to="/recipes">
+                                Рецепти
                             </Link>
+                        </li>
+                        <li className="nav-item">
+                        {role === 'admin' && (
+                            <Link className="nav-link text-info fw-bold" to="/moder">
+                                Модерація
+                            </Link>
+                            )}
                         </li>
                     </ul>
                     <div className="d-flex align-items-center">

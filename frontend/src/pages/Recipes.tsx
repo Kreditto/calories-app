@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 // import Footer from '../components/Footer';
-import { useNavigate } from 'react-router-dom';
 import './css/Main.css';
 
 const Recipes = () => {
-    const { token, role } = useContext(AuthContext);
+    const { token } = useContext(AuthContext);
     const [recepty, setRecepty] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<'system' | 'community'>('system');
     const [showCreate, setShowCreate] = useState(false);
-    const navigate = useNavigate();
     const [selections, setSelections] = useState<{ [key: string]: {foodType: string } }>({});
     const [newRecipe, setNewRecipe] = useState({
         name: '',
@@ -20,25 +18,16 @@ const Recipes = () => {
         ]
     });
 
-    useEffect(() => {
-        fetchRecipes();
-    }, [token]);
-    useEffect(() => {
-        if (role === undefined || role === null) return;
-        if (role && role !== 'premium') {
-            navigate('/premium', { replace: true });
-        }
-    }, [role, navigate]);
+    const headers = useMemo(() => ({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    }), [token]);
 
-
-    const fetchRecipes = async () => {
+    const fetchRecipes = useCallback(async () => {
         try {
             const response = await fetch('http://localhost:5000/api/recipes', {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                headers
             });
             const data = await response.json();
             if (response.ok) {
@@ -49,7 +38,11 @@ const Recipes = () => {
         } catch (err) {
             console.error(err);
         }
-    };
+    }, [headers]);
+
+    useEffect(() => {
+        fetchRecipes();
+    }, [fetchRecipes]);
 
     const addIngredientRow = () => {
         setNewRecipe({
@@ -99,10 +92,7 @@ const Recipes = () => {
         try {
             const response = await fetch('http://localhost:5000/api/recipes/create', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers,
                 body: JSON.stringify(recipeToSave)
             });
             const result = await response.json();
@@ -134,10 +124,7 @@ const Recipes = () => {
         try {
             const response = await fetch("http://localhost:5000/api/meals/add-recipe", {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
+                headers,
                 body: JSON.stringify({
                     recipeId,
                     FoodType: selection.foodType 

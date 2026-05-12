@@ -23,7 +23,6 @@ const Profile = () => {
         'Authorization': `Bearer ${token}`
     }), [token]);
 
-
     const loadProfileData = useCallback(async () => {
         try {
             const response = await fetch('http://localhost:5000/api/user', {
@@ -50,7 +49,10 @@ const Profile = () => {
         }
     }, [headers]);
 
-    useEffect(() => { loadProfileData(); }, [loadProfileData]);
+    useEffect(() => { 
+        loadProfileData(); 
+    }, [loadProfileData]);
+    
     useEffect(() => {
         const { vaga, zrist, vik, stat, activity, goal } = physicalData;
         if (vaga && zrist && vik && Number(vaga) > 0) {

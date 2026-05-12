@@ -15,6 +15,12 @@ const PerevirkaAuth = ({ children, allowedRoles }: PrivateRouteProps) => {
     }
 
     if (allowedRoles && role && !allowedRoles.includes(role)){
+        if (allowedRoles.includes("premium")) {
+            return <Navigate to="/premium" replace />;
+        }
+        if (allowedRoles.includes("admin")) {
+            return <Navigate to="/Home" replace />;
+        }
         return <Navigate to="/Home" replace />;
     } 
 

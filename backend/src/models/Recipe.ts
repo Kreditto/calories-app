@@ -5,6 +5,11 @@ const recipeSchema = new mongoose.Schema({
     authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     description: { type: String },
     isPublic: { type: Boolean, default: true },
+    statusRep: {
+        type: String, 
+        enum: ['pending', 'approved'], 
+        default: 'pending' 
+    },
     ingredients: [{
         name: { type: String, required: true },
         calories100: { type: Number, required: true },

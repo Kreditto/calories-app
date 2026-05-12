@@ -24,3 +24,19 @@ export const perevirkaAuth = (req: UserAuthRequest, res: Response, next: NextFun
         return res.status(401).json({ message: 'невалідний токен' });
     }
 }; 
+
+export const checkRole = (allowedRoles: string[]) => {
+    return (req: UserAuthRequest, res: Response, next: NextFunction) => {
+        if (!req.userRole) {
+            return res.status(403).json({ message: 'роль користувача не знайдена' });
+        }
+
+        if (allowedRoles.includes(req.userRole)) {
+            next(); 
+        } else {
+            return res.status(403).json({ 
+                message: 'доступ заборонено' 
+            });
+        }
+    };
+};

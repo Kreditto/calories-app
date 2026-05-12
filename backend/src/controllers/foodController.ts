@@ -3,7 +3,7 @@ import { Food } from '../models/Food';
 import { User } from '../models/User';
 import { type UserAuthRequest } from '../middleware/authCheck';
 
-export const searchFood = async (req: Request, res: Response) => {
+export const searchFood = async (req: UserAuthRequest, res: Response) => {
     const query = req.query.q as string;
     if (!query || query.length < 2){
         return res.json([]);

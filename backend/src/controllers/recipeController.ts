@@ -34,7 +34,7 @@ export const createRecipe = async (req: UserAuthRequest, res: Response) => {
     }
 };
 
-export const getAllRecipes = async (res: Response) => {
+export const getAllRecipes = async (_req: UserAuthRequest, res: Response) => {
     try {
         const conditions: any[] = [
             { authorId: null },

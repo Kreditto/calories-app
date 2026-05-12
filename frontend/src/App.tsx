@@ -6,6 +6,7 @@ import Recipes from './pages/Recipes';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Premium from './pages/Premium'; 
+import Moder from './pages/Moder'; 
 import PrivateRoute from './components/PerevirkaAuth';
 
 
@@ -19,7 +20,7 @@ function App() {
         <Route 
           path="/Home" 
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={['def', 'premium', 'admin']}>
               <Home />
             </PrivateRoute>
           } 
@@ -27,7 +28,7 @@ function App() {
         <Route 
           path="/Profile" 
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={['def', 'premium', 'admin']}>
               <Profile />
             </PrivateRoute>
           } 
@@ -35,7 +36,7 @@ function App() {
         <Route 
           path="/recipes" 
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={['premium', 'admin']}>
               <Recipes />
             </PrivateRoute>
           } 
@@ -43,12 +44,19 @@ function App() {
         <Route 
           path="/premium" 
           element={
-            <PrivateRoute>
+            <PrivateRoute allowedRoles={['def']}>
               <Premium />
             </PrivateRoute>
           } 
         />
-
+        <Route 
+          path="/moder" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <Moder />
+            </PrivateRoute>
+          } 
+        />
        
 
 

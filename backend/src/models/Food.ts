@@ -11,6 +11,11 @@ const foodSchema = new mongoose.Schema({
         enum: ['system', 'user_contributed'], 
         default: 'system' 
     },
+    statusFood: {
+        type: String, 
+        enum: ['pending', 'approved'], 
+        default: 'pending' 
+    },
     addedBy: { type: String, ref: 'User' } 
 });
 

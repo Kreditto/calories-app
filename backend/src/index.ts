@@ -29,5 +29,5 @@ app.use('/api/user', userRoutes);
 
 
 app.listen(PORT, () => {
-    console.log("Сервер на порту ${PORT} ");
+    console.log("Сервер на порту", {PORT});
 });

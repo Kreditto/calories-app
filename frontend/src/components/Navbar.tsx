@@ -26,13 +26,14 @@ const Navbar = () => {
                             <Link className="nav-link" to="/Profile">Профіль</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link text-warning fw-bold" to="/recipes">
-                                Рецепти {role !== 'premium' && <span className="text-warning"></span>}
+                            <Link className="nav-link" to="/recipes">
+                                Рецепти {role !== 'premium' && <span className="text-warning fw-bold"></span>}
                             </Link>
                         </li>
                     </ul>
                     <div className="d-flex align-items-center">
                         {role === 'premium' && <span className="badge bg-warning text-dark me-3">PREMIUM</span>}
+                        {role === 'admin' && <span className="badge bg-warning text-dark me-3">ADMIN</span>}
                         {token && (
                             <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>
                                 Вийти

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import './css/Main.css';
 
 const Profile = () => {
-    const { token, setRol } = useContext(AuthContext) as any;
+    const { token, setRole } = useContext(AuthContext) as any;
     const [login, setLogin] = useState('');
     const [email, setEmail] = useState('');
     const [userRole, setUserRole] = useState('def');
@@ -18,12 +18,13 @@ const Profile = () => {
     });
     const [message, setMessage] = useState({ type: '', text: '' });
 
-    const headers = {
+    const headers = useMemo(() => ({
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
-    };
+    }), [token]);
 
-    const loadProfileData = async () => {
+
+    const loadProfileData = useCallback(async () => {
         try {
             const response = await fetch('http://localhost:5000/api/user', {
                 headers
@@ -47,9 +48,9 @@ const Profile = () => {
         } catch (e) {
             setMessage({ type: 'danger', text: 'Помилка завантаження даних' });
         }
-    };
+    }, [headers]);
 
-    useEffect(() => { loadProfileData(); }, [token]);
+    useEffect(() => { loadProfileData(); }, [loadProfileData]);
     useEffect(() => {
         const { vaga, zrist, vik, stat, activity, goal } = physicalData;
         if (vaga && zrist && vik && Number(vaga) > 0) {
@@ -102,7 +103,7 @@ const Profile = () => {
             
             if (response.ok) {
                 setUserRole('def');
-                if (setRol) setRol('def');
+                if (setRole) setRole('def');
                 setShowModal(false);
                 setMessage({ type: 'success', text: 'Підписку скасовано.' });
             }

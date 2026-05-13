@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
+import { AuthContext } from '../../context/AuthContext';
+import Navbar from '../../components/Navbar';
 // import Footer from '../components/Footer';
-import './css/Main.css';
+import '../css/Main.css';
 
 const Recipes = () => {
     const { token } = useContext(AuthContext);

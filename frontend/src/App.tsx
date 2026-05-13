@@ -2,11 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
-import Recipes from './pages/Recipes';
+import Recipes from './pages/Premium/Recipes';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Premium from './pages/Premium'; 
-import Moder from './pages/Moder'; 
+import Premium from './pages/Premium';
+import Moder from './pages/Admin/ModerFood'; 
 import PrivateRoute from './components/PerevirkaAuth';
 
 

@@ -27,7 +27,8 @@ const Navbar = () => {
                         </li>
                         <li className="nav-item">
                              <Link className={`nav-link 
-                             ${role !== 'premium' ? 'text-warning fw-bold' : ''}`} to="/recipes">
+                             ${role == 'def' ? 'text-warning fw-bold' : ''}`
+                             } to="/recipes">
                                 Рецепти
                             </Link>
                         </li>
@@ -41,7 +42,7 @@ const Navbar = () => {
                     </ul>
                     <div className="d-flex align-items-center">
                         {role === 'premium' && <span className="badge bg-warning text-dark me-3">PREMIUM</span>}
-                        {role === 'admin' && <span className="badge bg-warning text-dark me-3">ADMIN</span>}
+                        {role === 'admin' && <span className="badge bg-info text-dark me-3">ADMIN</span>}
                         {token && (
                             <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>
                                 Вийти

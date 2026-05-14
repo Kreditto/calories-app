@@ -11,9 +11,12 @@ export const createRecipe = async (req: UserAuthRequest, res: Response) => {
             caloriesPer100, 
             bilkyPer100, 
             zhyryPer100, 
-            vuglevodyPer100 
+            vuglevodyPer100,
+            ingredients  
         } = req.body;
+        
         const userId = req.userId;
+
         const recipe = new Recipe({
             name,
             description,
@@ -23,28 +26,46 @@ export const createRecipe = async (req: UserAuthRequest, res: Response) => {
             bilkyPer100: Number(bilkyPer100),
             zhyryPer100: Number(zhyryPer100),
             vuglevodyPer100: Number(vuglevodyPer100),
-            ingredients: [] 
+            ingredients: ingredients || [],  
+            statusRep: 'pending'
         });
 
         await recipe.save();
-        res.status(201).json(recipe);
 
-    } catch (err: any) {
+        res.status(201).json({ message: 'рецепт створено', recipe });
+
+    } catch (err) {
         res.status(500).json({ message: 'помилка при створені рецепту' });
     }
 };
 
 export const getAllRecipes = async (_req: UserAuthRequest, res: Response) => {
     try {
-        const conditions: any[] = [
-            { authorId: null },
-            { isPublic: true }
-        ];
+       const recipes = await Recipe.find({
+            statusRecipe: 'approved'
+        }).populate('authorId', 'login');
+
+        res.status(200).json({ message: 'рецепти успішно отримано', recipes });
+
+    } catch (err) {
+        res.status(500).json({ message: "помилка отримання рецептів" });
+    }
+};
+
+export const getMyRecipes = async (req: UserAuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({message: 'не авторизовано'});
+        }
+
         const recipes = await Recipe.find({
-            $or: conditions
-        }).populate('authorId', 'username');
-        
-        res.json(recipes);
+            authorId: userId
+        }).populate('authorId', 'login')
+        .sort({ createdAt: -1 });
+
+        res.status(200).json({ message: 'ваші рецепти успішно отримано', recipes });
+
     } catch (err) {
         res.status(500).json({ message: "помилка отримання рецептів" });
     }

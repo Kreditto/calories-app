@@ -6,17 +6,6 @@ const foodSchema = new mongoose.Schema({
     bilkyPer100: { type: Number, required: true },
     zhyryPer100: { type: Number, required: true },
     vuglevodyPer100: { type: Number, required: true },
-    source: { 
-        type: String, 
-        enum: ['system', 'user_contributed'], 
-        default: 'system' 
-    },
-    statusFood: {
-        type: String, 
-        enum: ['pending', 'approved'], 
-        default: 'pending' 
-    },
-    addedBy: { type: String, ref: 'User' } 
 });
 
 export const Food = mongoose.model('Food', foodSchema);

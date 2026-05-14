@@ -32,17 +32,9 @@ const Navbar = () => {
                                 Рецепти
                             </Link>
                         </li>
-                        <li className="nav-item">
-                        {role === 'admin' && (
-                            <Link className="nav-link text-info fw-bold" to="/moder">
-                                Модерація
-                            </Link>
-                            )}
-                        </li>
                     </ul>
                     <div className="d-flex align-items-center">
                         {role === 'premium' && <span className="badge bg-warning text-dark me-3">PREMIUM</span>}
-                        {role === 'admin' && <span className="badge bg-info text-dark me-3">ADMIN</span>}
                         {token && (
                             <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>
                                 Вийти

@@ -1,0 +1,47 @@
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
+
+const Navbar = () => {
+    const { token, logout, role } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
+
+    return (
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+            <div className="container">
+                <Link className="navbar-brand fw-bold" to="/Moder">
+                    Трекер Калорій
+                </Link>
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav me-auto">
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/AdminProfile">
+                            Профіль
+                            </Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link text-info fw-bold" to="/moder">
+                                Модерація
+                            </Link>
+                        </li>
+                    </ul>
+                    <div className="d-flex align-items-center">
+                        <span className="badge bg-info text-dark me-3">ADMIN</span>
+                        {token && (
+                            <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>
+                                Вийти
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    );
+};
+
+export default Navbar;

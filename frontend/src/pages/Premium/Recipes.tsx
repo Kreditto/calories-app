@@ -14,7 +14,7 @@ const Recipes = () => {
         name: '',
         description: '',
         ingredients: [
-            { name: '', calories100: 0, bilky100: 0, zhyry100: 0, vuglevody100: 0, gramsInPortion: 0 }
+            { name: '', calories100: 0, bilky100: 0, zhyry100: 0, vuglevody100: 0, gramsInPortion: 100 }
         ]
     });
 
@@ -29,10 +29,11 @@ const Recipes = () => {
                 method: 'GET',
                 headers
             });
-            const data = await response.json();
             if (response.ok) {
-                setRecepty(data);
+                const data = await response.json();
+                setRecepty(Array.isArray(data) ? data : data.recipes || []);
             } else {
+                const data = await response.json();
                 console.error("помилка завантаження:", data.message);
             }
         } catch (err) {

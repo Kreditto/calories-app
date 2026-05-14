@@ -28,7 +28,7 @@ export const perevirkaAuth = (req: UserAuthRequest, res: Response, next: NextFun
 export const checkRole = (allowedRoles: string[]) => {
     return (req: UserAuthRequest, res: Response, next: NextFunction) => {
         if (!req.userRole) {
-            return res.status(403).json({ message: 'роль користувача не знайдена' });
+            return res.status(404).json({ message: 'роль користувача не знайдена' });
         }
 
         if (allowedRoles.includes(req.userRole)) {

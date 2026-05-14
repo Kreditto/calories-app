@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Premium from './pages/Premium';
 import Moder from './pages/Admin/ModerFood'; 
 import PrivateRoute from './components/PerevirkaAuth';
+import AdminProfile from './pages/Admin/AdminProfile';
 
 
 function App() {
@@ -57,7 +58,14 @@ function App() {
             </PrivateRoute>
           } 
         />
-       
+       <Route 
+          path="/AdminProfile" 
+          element={
+            <PrivateRoute allowedRoles={['admin']}>
+              <AdminProfile />
+            </PrivateRoute>
+          } 
+        />
 
 
         <Route path="/" element={<Navigate to="/Home" replace />} />

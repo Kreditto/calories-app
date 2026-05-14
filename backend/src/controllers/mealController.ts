@@ -15,7 +15,7 @@ export const addMealRecord = async (req: UserAuthRequest, res: Response) => {
 
         const product = await Food.findById(foodId);
         if (!product) {
-            return res.status(404).json({ message: 'Продукт не знайдено в базі даних.' });
+            return res.status(404).json({ message: 'продукт не знайдено в базі даних' });
         }
 
         const factor = grams / 100;
@@ -31,7 +31,9 @@ export const addMealRecord = async (req: UserAuthRequest, res: Response) => {
         });
 
         await novyjZapys.save();
-        res.status(201).json({ message: 'успішно додано до щоденника!', zapys: novyjZapys });
+
+        res.status(201).json({ message: 'успішно додано до щоденника', zapys: novyjZapys });
+
     } catch (err) {
         res.status(500).json({ message: 'помилка при додаванні запису.' });
     }
@@ -57,11 +59,11 @@ export const addRecipeToDiary = async (req: UserAuthRequest, res: Response) => {
             calculatedVuglevody: Math.round(recipe.vuglevodyPer100 * factor)
         });
         await novyjZapys.save();
-        res.status(201).json({ message: "рецепт додано у щоденник!", zapys: novyjZapys });
+
+        res.status(201).json({ message: "рецепт додано у щоденник", zapys: novyjZapys });
 
     } catch (err) {
-        // console.error("ADD RECIPE ERROR:", err);
-        res.status(500).json({ message: "помилка додавання рецепта.", error: err });
+        res.status(500).json({ message: "помилка додавання рецепта."});
     }
 };
 
@@ -99,8 +101,8 @@ export const getStatistics = async (req: UserAuthRequest, res: Response) => {
             zalishokKkal: (goal && goal.calories) ? (goal.calories - totals.calories) : 0,
             zapysy 
         });
+
     } catch (err) {
-        // console.error("STATS ERROR:", err);
         res.status(500).json({ message: 'помилка отримання статистики' });
     }
 };
@@ -120,7 +122,8 @@ export const getHistory = async (req: UserAuthRequest, res: Response) => {
             { $sort: { "_id": -1 } } 
         ]);
 
-        res.json(istoriya);
+        res.status(200).json({ message: 'історія успішно отримана', istoriya });
+
     } catch (err) {
         res.status(500).json({ message: 'помилка отримання історії.' });
     }
@@ -141,7 +144,8 @@ export const deleteMealRecord = async (req: UserAuthRequest, res: Response) => {
         if (!deletedRecord) {
             return res.status(404).json({ message: 'запис не знайдено.' });
         }
-        res.json({ message: 'запис успішно видалено' });
+
+        res.status(200).json({ message: 'запис успішно видалено' });
 
     } catch (err) {
         res.status(500).json({ message: 'помилка видалення.' });
@@ -172,7 +176,8 @@ export const updateMealRecord = async (req: UserAuthRequest, res: Response) => {
         record.calculatedVuglevody = Math.round(source.vuglevodyPer100 * factor);
 
         await record.save();
-        res.json({ message: 'запис оновлено', zapys: record });
+        
+        res.status(200).json({ message: 'запис оновлено', zapys: record });
 
     } catch (err) {
         res.status(500).json({ message: 'помилка оновлення запису.' });

@@ -10,7 +10,8 @@ export const getProfile = async (req: UserAuthRequest, res: Response) => {
         const user = await User.findById(userId).select('-password');
         if (!user) return res.status(404).json({ message: 'користувача не знайдено' });
 
-        res.json(user);
+        res.status(200).json({ message: 'профіль отримано', user });
+
     } catch (err) {
         res.status(500).json({ message: 'помилка при отриманні даних профілю.' });
     }
@@ -44,7 +45,9 @@ export const updateProfile = async (req: UserAuthRequest, res: Response) => {
         }
 
         await user.save();
-        res.json({ message: 'профіль та цілі оновлено', user: { email: user.email } });
+
+        res.status(200).json({ message: 'профіль та цілі оновлено' });
+
     } catch (err) {
         res.status(500).json({ message: "помилка при оновленні профілю" });
     }
@@ -60,23 +63,22 @@ export const buyPremium = async (req: UserAuthRequest, res: Response) => {
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             {
-                UserRole: 'premium',
-                CardData: { cardNumber, expiryDate, cardHolder, cvv }
+                userRole: 'premium',
+                cardData: { cardNumber, expiryDate, cardHolder }
             },
             { new: true }
         );
 
         if (!updatedUser) return res.status(404).json({ message: "користувача не знайдено" });
+
         const newToken = jwt.sign(
             { id: updatedUser._id, role: 'premium' },
             process.env.JWT_SECRET || 'secret',
             { expiresIn: '24h' }
         );
-        res.json({ 
-            message: "Вітаємо з покупкою Premium", 
-            token: newToken, 
-            role: 'premium' 
-        });
+
+        res.status(200).json({ message: "підписку оформлено успішно.", token: newToken, role: 'premium' });
+
     } catch (err) {
         res.status(500).json({ message: "помилка при оплаті" });
     }
@@ -88,22 +90,20 @@ export const cancelPremium = async (req: UserAuthRequest, res: Response) => {
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             { 
-                UserRole: 'def',
-                //  видалити дані картки
+                userRole: 'def'
             },
             { new: true }
         );
+
         if (!updatedUser) return res.status(404).json({ message: "Користувача не знайдено" });
         const newToken = jwt.sign(
             { id: updatedUser._id, role: 'def' },
             process.env.JWT_SECRET || 'secret',
             { expiresIn: '24h' }
         );
-        res.json({ 
-            message: "підписку скасовано.", 
-            token: newToken, 
-            role: 'def' 
-        });
+
+        res.status(200).json({ message: "підписку скасовано.", token: newToken, role: 'def' });
+        
     } catch (err) {
         res.status(500).json({ message: "помилка при скасуванні підписки" });
     }

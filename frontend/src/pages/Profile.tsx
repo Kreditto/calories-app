@@ -10,12 +10,18 @@ const Profile = () => {
     const [userRole, setUserRole] = useState('def');
     const [showModal, setShowModal] = useState(false);
 
-    const [physicalData, setPhysicalData] = useState({
-        vaga: '', zrist: '', vik: '', stat: 'female', activity: '1.2', goal: 'maintain'
-    });
-    const [targets, setTargets] = useState({
-        kaloriyi: 0, bilky: 0, zhyry: 0, vuglevody: 0
-    });
+    const [vaga, setVaga] = useState('');
+    const [zrist, setZrist] = useState('');
+    const [vik, setVik] = useState('');
+    const [stat, setStat] = useState('female');
+    const [activity, setActivity] = useState('1.2');
+    const [goal, setGoal] = useState('maintain');
+
+    const [kaloriyi, setKaloriyi] = useState(0);
+    const [bilky, setBilky] = useState(0);
+    const [zhyry, setZhyry] = useState(0);
+    const [vuglevody, setVuglevody] = useState(0);
+
     const [message, setMessage] = useState({ type: '', text: '' });
 
     const headers = useMemo(() => ({
@@ -25,69 +31,59 @@ const Profile = () => {
 
     const loadProfileData = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/user', {
-                headers
+            const response = await fetch('http://localhost:5000/api/user', { 
+                headers 
             });
-            if (!response.ok) {
-                throw new Error(`Помилка: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Помилка: ${response.status}`);
             const data = await response.json();
-            
-            setLogin(data.login || ''); 
-            setEmail(data.email || '');
-            setUserRole(data.UserRole || 'def');
-            setPhysicalData({
-                vaga: data.vaga || '',
-                zrist: data.zrist || '',
-                vik: data.vik || '',
-                stat: data.stat || 'female',
-                activity: data.activity || '1.2',
-                goal: data.goal || 'maintain'
-            });
+            const user = data.user;
+
+            setLogin(user.login || '');
+            setEmail(user.email || '');
+            setUserRole(user.userRole || 'def');
+            setVaga(user.vaga || '');
+            setZrist(user.zrist || '');
+            setVik(user.vik || '');
+            setStat(user.stat || 'female');
+            setActivity(user.activity || '1.2');
+            setGoal(user.goal || 'maintain');
+            setKaloriyi(user.calories || 0);
+            setBilky(user.bilky || 0);
+            setZhyry(user.zhyry || 0);
+            setVuglevody(user.vuglevody || 0);
         } catch (e) {
             setMessage({ type: 'danger', text: 'Помилка завантаження даних' });
         }
     }, [headers]);
 
-    useEffect(() => { 
-        loadProfileData(); 
-    }, [loadProfileData]);
-    
     useEffect(() => {
-        const { vaga, zrist, vik, stat, activity, goal } = physicalData;
+        loadProfileData();
+    }, [loadProfileData]);
+
+    useEffect(() => {
         if (vaga && zrist && vik && Number(vaga) > 0) {
             let bmr = (10 * Number(vaga)) + (6.25 * Number(zrist)) - (5 * Number(vik));
             bmr = stat === 'male' ? bmr + 5 : bmr - 161;
-            
             let total = bmr * Number(activity);
-            
-            if (goal === 'lose') total *= 0.85; 
-            else if (goal === 'gain') total *= 1.15; 
-
+            if (goal === 'lose') total *= 0.85;
+            else if (goal === 'gain') total *= 1.15;
             const kcal = Math.round(total);
-            setTargets({
-                kaloriyi: kcal,
-                bilky: Math.round((kcal * 0.25) / 4),
-                zhyry: Math.round((kcal * 0.25) / 9),
-                vuglevody: Math.round((kcal * 0.5) / 4)
-            });
+            setKaloriyi(kcal);
+            setBilky(Math.round((kcal * 0.25) / 4));
+            setZhyry(Math.round((kcal * 0.25) / 9));
+            setVuglevody(Math.round((kcal * 0.5) / 4));
         }
-    }, [physicalData]);
+    }, [vaga, zrist, vik, stat, activity, goal]);
 
-    const handleSaveProfile = async (e: React.SubmitEvent) => {
+    const handleSaveProfile = async (e: React.BaseSyntheticEvent) => {
         e.preventDefault();
         try {
             const response = await fetch('http://localhost:5000/api/user', {
                 method: 'PUT',
                 headers,
-                body: JSON.stringify({ 
-                    login, 
-                    ...physicalData, 
-                    calories: targets.kaloriyi,
-                    bilky: targets.bilky,
-                    zhyry: targets.zhyry,
-                    vuglevody: targets.vuglevody,
-                    goal: physicalData.goal 
+                body: JSON.stringify({
+                    login, vaga, zrist, vik, stat, activity, goal,
+                    calories: kaloriyi, bilky, zhyry, vuglevody
                 })
             });
             if (response.ok) setMessage({ type: 'success', text: 'Профіль оновлено!' });
@@ -102,7 +98,6 @@ const Profile = () => {
                 method: 'POST',
                 headers
             });
-            
             if (response.ok) {
                 setUserRole('def');
                 if (setRole) setRole('def');
@@ -162,26 +157,26 @@ const Profile = () => {
                         <div className="d-flex flex-column gap-3">
                             <div>
                                 <label htmlFor="vaga" className="form-label small fw-bold">Вага (кг)</label>
-                                <input id="vaga" type="number" className="form-control" value={physicalData.vaga} onChange={(e) => setPhysicalData({...physicalData, vaga: e.target.value})} />
+                                <input id="vaga" type="number" className="form-control" value={vaga} onChange={e => setVaga(e.target.value)} />
                             </div>
                             <div>
                                 <label htmlFor="zrist" className="form-label small fw-bold">Зріст (см)</label>
-                                <input id="zrist" type="number" className="form-control" value={physicalData.zrist} onChange={(e) => setPhysicalData({...physicalData, zrist: e.target.value})} />
+                                <input id="zrist" type="number" className="form-control" value={zrist} onChange={e => setZrist(e.target.value)} />
                             </div>
                             <div>
                                 <label htmlFor="vik" className="form-label small fw-bold">Вік</label>
-                                <input id="vik" type="number" className="form-control" value={physicalData.vik} onChange={(e) => setPhysicalData({...physicalData, vik: e.target.value})} />
+                                <input id="vik" type="number" className="form-control" value={vik} onChange={e => setVik(e.target.value)} />
                             </div>
                             <div>
                                 <label htmlFor="stat" className="form-label small fw-bold">Стать</label>
-                                <select id="stat" className="form-select" value={physicalData.stat} onChange={(e) => setPhysicalData({...physicalData, stat: e.target.value})}>
+                                <select id="stat" className="form-select" value={stat} onChange={e => setStat(e.target.value)}>
                                     <option value="male">Чоловік</option>
                                     <option value="female">Жінка</option>
                                 </select>
                             </div>
                             <div>
                                 <label htmlFor="activity" className="form-label small fw-bold">Активність</label>
-                                <select id="activity" className="form-select" value={physicalData.activity} onChange={(e) => setPhysicalData({...physicalData, activity: e.target.value})}>
+                                <select id="activity" className="form-select" value={activity} onChange={e => setActivity(e.target.value)}>
                                     <option value="1.2">Мінімальна (сидяча робота)</option>
                                     <option value="1.375">Низька (1-2 тренування)</option>
                                     <option value="1.55">Середня (3-5 тренувань)</option>
@@ -190,7 +185,7 @@ const Profile = () => {
                             </div>
                             <div>
                                 <label htmlFor="cil" className="form-label small fw-bold">Ціль</label>
-                                <select id="cil" className="form-select" value={physicalData.goal} onChange={(e) => setPhysicalData({...physicalData, goal: e.target.value})}>
+                                <select id="cil" className="form-select" value={goal} onChange={e => setGoal(e.target.value)}>
                                     <option value="lose">Схуднення</option>
                                     <option value="maintain">Підтримка</option>
                                     <option value="gain">Набір маси</option>
@@ -203,20 +198,20 @@ const Profile = () => {
                         <h5 className="fw-bold mb-3">Денна норма КДЖВ</h5>
                         <div className="mb-3">
                             <label htmlFor="kcal" className="form-label small opacity-75">Калорії</label>
-                            <input id="kcal" type="number" className="form-control form-control-lg bg-white" value={targets.kaloriyi} onChange={(e) => setTargets({...targets, kaloriyi: Number(e.target.value)})} />
+                            <input id="kcal" type="number" className="form-control form-control-lg bg-white"value={kaloriyi} onChange={e => setKaloriyi(Number(e.target.value))} />
                         </div>
                         <div className="row g-2 text-dark">
                             <div className="col-4">
                                 <label htmlFor="bilky" className="small text-white">Білки</label>
-                                <input id="bilky" type="number" className="form-control" value={targets.bilky} onChange={(e) => setTargets({...targets, bilky: Number(e.target.value)})} />
+                                <input id="bilky" type="number" className="form-control" value={bilky} onChange={e => setBilky(Number(e.target.value))} />
                             </div>
                             <div className="col-4">
                                 <label htmlFor="zhyry" className="small text-white">Жири</label>
-                                <input id="zhyry" type="number" className="form-control" value={targets.zhyry} onChange={(e) => setTargets({...targets, zhyry: Number(e.target.value)})} />
+                                <input id="zhyry" type="number" className="form-control" value={zhyry} onChange={e => setZhyry(Number(e.target.value))} />
                             </div>
                             <div className="col-4">
                                 <label htmlFor="vuglevody" className="small text-white">Вуглев.</label>
-                                <input id="vuglevody" type="number" className="form-control" value={targets.vuglevody} onChange={(e) => setTargets({...targets, vuglevody: Number(e.target.value)})} />
+                                <input id="vuglevody" type="number" className="form-control" value={vuglevody} onChange={e => setVuglevody(Number(e.target.value))} />
                             </div>
                         </div>
                     </div>

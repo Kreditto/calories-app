@@ -47,8 +47,14 @@ const Login: React.FC = () => {
             }
 
             if (data && data.token) {
+
                 login(data.token, data.role || 'user');
-                navigate('/Home');
+
+                if (data.role === 'admin') {
+                    navigate('/Moder');
+                } else {
+                    navigate('/Home');
+                }
             }
         } catch (err) {
             console.error(err);

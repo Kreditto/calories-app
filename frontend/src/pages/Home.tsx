@@ -67,7 +67,8 @@ const Home = () => {
                 }
             }
             if (resHistory.ok) {
-                setIstoriya(await resHistory.json());
+                const historyData = await resHistory.json();
+                setIstoriya(Array.isArray(historyData) ? historyData : historyData.history || []);
             }
         } catch (err) {
             console.error(err);
@@ -183,15 +184,15 @@ const Home = () => {
                             id="food-search"
                             className="form-control form-control-lg" 
                             placeholder="Напр. Курка"
-                            value={selectedFood ? selectedFood.name : searchTerm}
-                            onChange={(e) => { setSearchTerm(e.target.value); if (selectedFood) setSelectedFood(null); }} 
+                            value={searchTerm}
+                            onChange={(e) => {setSearchTerm(e.target.value ?? '');if (selectedFood) setSelectedFood(null);}}
                         />
                         
                         {searchResults.length > 0 && (
                             <ul className="list-group position-absolute w-100 shadow search-results-list" style={{ zIndex: 1000 }}>
                                 {searchResults.map(f => (
                                     <li key={f._id} className="list-group-item list-group-item-action d-flex justify-content-between"
-                                        onClick={() => { setSelectedFood(f); setSearchResults([]); }} style={{ cursor: 'pointer' }}>
+                                        onClick={() => { setSelectedFood(f); setSearchTerm(f.name); setSearchResults([]); }} style={{ cursor: 'pointer' }}>
                                         <span>{f.name}</span><small>{f.caloriesPer100} ккал</small>
                                     </li>
                                 ))}

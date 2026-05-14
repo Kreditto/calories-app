@@ -14,23 +14,3 @@ export const searchFood = async (req: UserAuthRequest, res: Response) => {
 
     res.json(products);
 };
-
-export const addFoodToLibrary = async (req: UserAuthRequest, res: Response) => {
-    const { name, caloriesPer100, bilkyPer100, zhyryPer100, vuglevodyPer100 } = req.body;
-    const user = await User.findById(req.userId);
-    if (!user) {
-        return res.status(404).json({ message: 'користувача не знайдено' });
-    } 
-    const newFood = new Food({
-        name,
-        caloriesPer100,
-        bilkyPer100,
-        zhyryPer100,
-        vuglevodyPer100,
-        source: 'user_contributed',
-        addedBy: user.login
-    });
-
-    await newFood.save();
-    res.status(201).json({ message: 'продукт додано', food: newFood });
-};

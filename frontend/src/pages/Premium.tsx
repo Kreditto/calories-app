@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 
 const Premium = () => {
@@ -52,7 +51,6 @@ const Premium = () => {
 
     return (
         <>
-            <Navbar />
             <div className="container mt-5 mb-5">
                 <div className="text-center mb-5">
                     <h1 className="display-4 fw-bold text-success">Оберіть свій план</h1>

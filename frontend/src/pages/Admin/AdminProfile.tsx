@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import Navbar from '../../components/Admin/Navbar';
 import '../css/Main.css';
 
 const AdminProfile = () => {
@@ -98,8 +97,6 @@ const AdminProfile = () => {
 
     return (
         <>
-            <Navbar />
-
             <div
                 className="container mt-5 mb-5"
                 style={{ maxWidth: '600px' }}

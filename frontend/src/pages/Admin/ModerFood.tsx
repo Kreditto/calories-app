@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import Navbar from '../../components/Admin/Navbar';
 import '../css/Main.css';
 
 const Moder = () => {
@@ -245,7 +244,6 @@ const Moder = () => {
 
     return (
         <>
-            <Navbar />
             <div className="container mt-4">
                 <div className="d-flex justify-content-between mb-3">
                     <h2>Адмін-панель</h2>

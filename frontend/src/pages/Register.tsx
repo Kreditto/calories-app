@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-// import { AuthContext } from '../context/AuthContext';
-// import Navbar from '../components/Navbar';
-// import Footer from '../components/Footer';
 import './css/Main.css'; 
 
 const Register = () => {
     const [login, setLogin] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const [isPremium, setIsPremium] = useState(false);
     const [emailError, setEmailError] = useState<string | null>(null);
     const navigate = useNavigate();
     
@@ -46,10 +42,6 @@ const Register = () => {
         } catch (error) {
             console.error("рестраційна помилка:", error);
         }
-
-        // if (res.data && res.data.token) {
-        //     login(res.data.token, res.data.role || 'user');
-        //     navigate('/Home');
 
     };
 

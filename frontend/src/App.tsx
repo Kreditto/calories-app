@@ -9,70 +9,96 @@ import Premium from './pages/Premium';
 import Moder from './pages/Admin/ModerFood'; 
 import PrivateRoute from './components/PerevirkaAuth';
 import AdminProfile from './pages/Admin/AdminProfile';
-
+import Navbar from './components/Navbar';
+import AdminNavbar from './components/Admin/Navbar';
+import Footer from './components/Footer';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      <div id="root" className="d-flex flex-column min-vh-100">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        <Route 
-          path="/Home" 
-          element={
-            <PrivateRoute allowedRoles={['def', 'premium', 'admin']}>
-              <Home />
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/Profile" 
-          element={
-            <PrivateRoute allowedRoles={['def', 'premium', 'admin']}>
-              <Profile />
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/recipes" 
-          element={
-            <PrivateRoute allowedRoles={['premium', 'admin']}>
-              <Recipes />
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/premium" 
-          element={
-            <PrivateRoute allowedRoles={['def']}>
-              <Premium />
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/moder" 
-          element={
-            <PrivateRoute allowedRoles={['admin']}>
-              <Moder />
-            </PrivateRoute>
-          } 
-        />
-       <Route 
-          path="/AdminProfile" 
-          element={
-            <PrivateRoute allowedRoles={['admin']}>
-              <AdminProfile />
-            </PrivateRoute>
-          } 
-        />
+          <Route 
+            path="/moder" 
+            element={
+              <PrivateRoute allowedRoles={['admin']}>
+                <>
+                  <AdminNavbar />
+                  <Moder />
+                  <Footer />
+                </>
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/AdminProfile" 
+            element={
+              <PrivateRoute allowedRoles={['admin']}>
+                <>
+                  <AdminNavbar />
+                  <AdminProfile />
+                  <Footer />
+                </>
+              </PrivateRoute>
+            } 
+          />
 
+          <Route 
+            path="/Home" 
+            element={
+              <PrivateRoute allowedRoles={['def', 'premium', 'admin']}>
+                <>
+                  <Navbar />
+                  <Home />
+                  <Footer />
+                </>
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/Profile" 
+            element={
+              <PrivateRoute allowedRoles={['def', 'premium', 'admin']}>
+                <>
+                  <Navbar />
+                  <Profile />
+                  <Footer />
+                </>
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/recipes" 
+            element={
+              <PrivateRoute allowedRoles={['premium', 'admin']}>
+                <>
+                  <Navbar />
+                  <Recipes />
+                  <Footer />
+                </>
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/premium" 
+            element={
+              <PrivateRoute allowedRoles={['def']}>
+                <>
+                  <Navbar />
+                  <Premium />
+                  <Footer />
+                </>
+              </PrivateRoute>
+            } 
+          />
 
-        <Route path="/" element={<Navigate to="/Home" replace />} />
-        <Route path="*" element={<Navigate to="/Home" replace />} />
-
-        
-      </Routes>
+          <Route path="/" element={<Navigate to="/Home" replace />} />
+          <Route path="*" element={<Navigate to="/Home" replace />} />
+        </Routes>
+      </div>
     </Router>
   );
 }

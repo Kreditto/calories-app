@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
 import './css/Main.css';
 
 const Profile = () => {
@@ -111,11 +110,8 @@ const Profile = () => {
 
     return (
         <>
-            <Navbar />
             <div className="container mt-5 mb-5" style={{ maxWidth: '600px' }}>
                 <div className="text-center mb-5">
-                    {/* додати потім додавання зображеняя
-                     <img src="" alt="User Avatar" className="rounded-circle shadow-sm border border-3 border-success" style={{ width: '120px', height: '120px' }} /> */}
                     <h2 className="mt-3 fw-bold">Профіль користувача</h2>
                 </div>
 

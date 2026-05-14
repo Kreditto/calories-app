@@ -1,8 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-// import Navbar from '../components/Navbar';
-// import Footer from '../components/Footer';
 import './css/Main.css'; 
 
 const Login: React.FC = () => {

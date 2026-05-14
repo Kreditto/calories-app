@@ -14,8 +14,8 @@ const Navbar = () => {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div className="container">
-                <Link className="navbar-brand fw-bold" to="/Home">
-                    Трекер Калорій
+                <Link className="navbar-brand text-success fw-bold" to="/Home">
+                    Kaloria
                 </Link>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav me-auto">

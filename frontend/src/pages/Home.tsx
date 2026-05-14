@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
 import './css/Main.css';
 
 const Home = () => {
@@ -156,7 +155,6 @@ const Home = () => {
 
     return (
         <>
-            <Navbar />
             <div className="container mt-5 mb-5">
                 <h1 className="mb-4 text-center">Мій Щоденник</h1>
 

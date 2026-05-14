@@ -82,31 +82,11 @@ export const updateFood = async (req: UserAuthRequest, res: Response) => {
 };
 
 // рецепти
-export const updateRecipe = async (req: UserAuthRequest, res: Response) => {
-    try {
-        const { id } = req.params;
-        const { name, description, isPublic, caloriesPer100, bilkyPer100, zhyryPer100, vuglevodyPer100 } = req.body;
-
-        const updatedRecipe = await Recipe.findByIdAndUpdate(
-            id,
-            { name, description, isPublic, caloriesPer100, bilkyPer100, zhyryPer100, vuglevodyPer100 },
-            { new: true }
-        );
-
-        if (!updatedRecipe) {
-            return res.status(404).json({ message: 'рецепт не знайдено' });
-        }
-
-        res.status(200).json({ message: 'рецепт оновлено', recipe: updatedRecipe });
-
-    } catch (err) {
-        res.status(500).json({ message: "помилка при оновленні рецепту" });
-    }
-};
-
 export const getAllRecipes = async (_req: UserAuthRequest, res: Response) => {
     try {
-        const recipes = await Recipe.find({});
+        const recipes = await Recipe.find({
+            statusRep: 'approved'
+        }).populate('authorId', 'login');
 
         res.status(200).json({ message: 'рецепти успішно отримано', recipes });
 
@@ -120,7 +100,7 @@ export const getPendingRecipe = async (_req: UserAuthRequest, res: Response) => 
     try {
         const pendingRecipes = await Recipe.find({
             statusRep: 'pending'
-        });
+        }).populate('authorId', 'login');
 
         res.status(200).json(pendingRecipes);
 
@@ -178,24 +158,23 @@ export const createRecipe = async (req: UserAuthRequest, res: Response) => {
         const { 
             name, 
             description, 
-            isPublic, 
             caloriesPer100, 
             bilkyPer100, 
             zhyryPer100, 
-            vuglevodyPer100 
+            vuglevodyPer100,
+            ingredients
         } = req.body;
         const userId = req.userId;
         const newRecipe = new Recipe({
             name,
             description,
-            isPublic: isPublic !== undefined ? isPublic : true,
-            authorId: userId,
+            authorId: null,
             caloriesPer100: Number(caloriesPer100),
             bilkyPer100: Number(bilkyPer100),
             zhyryPer100: Number(zhyryPer100),
             vuglevodyPer100: Number(vuglevodyPer100),
-            ingredients: [],
-            statusRep: 'approved'
+            ingredients: ingredients || [],
+            statusRep: 'approved',
         });
 
         await newRecipe.save();

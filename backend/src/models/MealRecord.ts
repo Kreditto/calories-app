@@ -6,6 +6,7 @@ const MealRecordSchema = new mongoose.Schema({
     FoodType: { type: String, enum: ['snidanok', 'obid', 'vecherya', 'poludenok', 'perekus'], required: true },
     foodId: { type: mongoose.Schema.Types.ObjectId, ref: 'Food' },
     grams: { type: Number },
+    portions: { type: Number },
     recipeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' },
     calculatedCalories: { type: Number, default: 0 },
     calculatedBilky: { type: Number, default: 0 },

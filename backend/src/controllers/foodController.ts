@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { Food } from '../models/Food';
-import { User } from '../models/User';
 import { type UserAuthRequest } from '../middleware/authCheck';
 
 export const searchFood = async (req: UserAuthRequest, res: Response) => {

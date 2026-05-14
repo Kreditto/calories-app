@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useCallback } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import './css/Main.css';
@@ -24,10 +24,10 @@ const Home = () => {
         name: '', caloriesPer100: 0, bilkyPer100: 0, zhyryPer100: 0, vuglevodyPer100: 0
     });
 
-    const headers = { 
-        'Authorization': `Bearer ${token}`, 
-        'Content-Type': 'application/json' 
-    };
+    const headers = useMemo(() => ({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+    }), [token]);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
@@ -43,9 +43,9 @@ const Home = () => {
             }
         }, 400);
         return () => clearTimeout(delayDebounceFn);
-    }, [searchTerm, selectedFood, token]);
+    }, [searchTerm, selectedFood, headers]);
 
-    const downloadDani = async () => {
+    const downloadDani = useCallback(async () => {
         try {
             const [resStat, resHistory] = await Promise.all([
                 fetch('http://localhost:5000/api/meals/stats', { 
@@ -73,11 +73,11 @@ const Home = () => {
         } catch (err) {
             console.error(err);
         }
-    };
+    }, [headers]);
 
     useEffect(() => { 
         if (token) downloadDani(); 
-    }, [token]);
+    }, [downloadDani]);
 
     const dodatyYizhu = async () => {
         if (!selectedFood || grams <= 0) return;
@@ -264,7 +264,10 @@ const Home = () => {
                                         {meals.map(z => (
                                             <tr key={z._id} className="border-bottom">
                                                 <td className="w-50">{z.foodId?.name || z.recipeId?.name}</td>
-                                                <td>{z.grams}г</td>
+                                                {z.recipeId 
+                                                    ? `${z.portions} порц.` 
+                                                    : `${z.grams}г`
+                                                }
                                                 <td>{z.calculatedVuglevody} Вуглеводів</td>
                                                 <td>{z.calculatedBilky} Білків</td>
                                                 <td>{z.calculatedZhyry} Жирів</td>

@@ -7,7 +7,6 @@ export const createRecipe = async (req: UserAuthRequest, res: Response) => {
         const { 
             name, 
             description, 
-            isPublic, 
             caloriesPer100, 
             bilkyPer100, 
             zhyryPer100, 
@@ -20,7 +19,6 @@ export const createRecipe = async (req: UserAuthRequest, res: Response) => {
         const recipe = new Recipe({
             name,
             description,
-            isPublic: isPublic !== undefined ? isPublic : true,
             authorId: userId,
             caloriesPer100: Number(caloriesPer100),
             bilkyPer100: Number(bilkyPer100),
@@ -42,7 +40,7 @@ export const createRecipe = async (req: UserAuthRequest, res: Response) => {
 export const getAllRecipes = async (_req: UserAuthRequest, res: Response) => {
     try {
        const recipes = await Recipe.find({
-            statusRecipe: 'approved'
+            statusRep: 'approved'
         }).populate('authorId', 'login');
 
         res.status(200).json({ message: 'рецепти успішно отримано', recipes });

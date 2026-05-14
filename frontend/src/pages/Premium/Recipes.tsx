@@ -17,6 +17,7 @@ const Recipes = () => {
             { name: '', calories100: 0, bilky100: 0, zhyry100: 0, vuglevody100: 0, gramsInPortion: 100 }
         ]
     });
+    const [portions, setPortions] = useState<{ [key: string]: number }>({});
 
     const headers = useMemo(() => ({
         'Content-Type': 'application/json',
@@ -29,11 +30,11 @@ const Recipes = () => {
                 method: 'GET',
                 headers
             });
+
+            const data = await response.json();
             if (response.ok) {
-                const data = await response.json();
-                setRecepty(Array.isArray(data) ? data : data.recipes || []);
+                setRecepty(data.recipes);
             } else {
-                const data = await response.json();
                 console.error("помилка завантаження:", data.message);
             }
         } catch (err) {
@@ -68,7 +69,7 @@ const Recipes = () => {
         setNewRecipe({ ...newRecipe, ingredients: updatedIngredients });
     };
 
-    const handleCreateRecipe = async (e: React.SubmitEvent) => {
+    const handleCreateRecipe = async (e: React.BaseSyntheticEvent) => {
         e.preventDefault();
         let totalCal = 0, totalB = 0, totalZ = 0, totalV = 0;
         newRecipe.ingredients.forEach(ing => {
@@ -82,7 +83,7 @@ const Recipes = () => {
         const recipeToSave = {
             name: newRecipe.name,
             description: newRecipe.description,
-            caloriesPer100: Math.round(totalCal),
+            caloriesPer100: Math.round(totalCal), 
             bilkyPer100: Math.round(totalB),
             zhyryPer100: Math.round(totalZ),
             vuglevodyPer100: Math.round(totalV),
@@ -102,7 +103,7 @@ const Recipes = () => {
                 setShowCreate(false);
                 fetchRecipes();
             } else {
-                console.error(`помилка на сервері ${response.status}:`, result.message);
+                console.error('помилка на сервері', result.message);
             }
         } catch (err) {
             console.error(err);
@@ -121,6 +122,7 @@ const Recipes = () => {
 
     const addRecipeToDiary = async (recipeId: string) => {
         const selection = selections[recipeId] || { grams: 100, foodType: 'snidanok' };
+        const portion = portions[recipeId] || 1;
 
         try {
             const response = await fetch("http://localhost:5000/api/meals/add-recipe", {
@@ -128,17 +130,16 @@ const Recipes = () => {
                 headers,
                 body: JSON.stringify({
                     recipeId,
-                    FoodType: selection.foodType 
+                    FoodType: selection.foodType,
+                    portions: portion
                 })
             });
 
             const result = await response.json();
-
             if (response.ok) {
-                setShowCreate(false);
                 fetchRecipes();
             } else { 
-                console.error("помилка створення рецепту:", result.message);
+                console.error('помилка створення рецепту:', result.message);
             }
         } catch (err) {
             console.error(err);
@@ -151,7 +152,7 @@ const Recipes = () => {
             <div className="container mt-4">
                 <div className="d-flex justify-content-between mb-3">
                     <h2>Рецепти</h2>
-                    <button className="btn btn-success" onClick={() => setShowCreate(true)}>+ Створити рецепт</button>
+                    <button className="btn btn-success" onClick={() => setShowCreate(true)}>+ Запропонувати рецепт</button>
                 </div>
 
                 <ul className="nav nav-tabs mb-3">
@@ -167,28 +168,55 @@ const Recipes = () => {
                     {recepty
                         .filter(r => (activeTab === 'system' ? !r.authorId : r.authorId))
                         .map(r => {
-                            const current = selections[r._id] || { grams: 100, foodType: 'snidanok' };
+                            const current = selections[r._id] || { foodType: 'snidanok' };
+                            const portion = portions[r._id] || 1;
+
                             return (
                                 <div className="col-md-4 mb-3" key={r._id}>
                                     <div className="card shadow-sm h-100">
                                         <div className="card-body d-flex flex-column">
                                             <h5>{r.name}</h5>
                                             <p className="small text-muted flex-grow-1">{r.description}</p>
-                                            <div className="badge bg-primary mb-2 d-block">{r.caloriesPer100} ккал / 100г</div>
-                                            
-                                            <div className="d-flex gap-1 mb-3 justify-content-center">
-                                                <span className="badge border text-dark">Б: {r.bilkyPer100}г</span>
-                                                <span className="badge border text-dark">Ж: {r.zhyryPer100}г</span>
-                                                <span className="badge border text-dark">В: {r.vuglevodyPer100}г</span>
+
+                                            {r.authorId && (
+                                                <p className="small text-muted mb-2">АВТОР: {r.authorId.login}</p>
+                                            )}
+
+                                            {r.ingredients && r.ingredients.length > 0 && (
+                                                <div className="mb-2">
+                                                    <small className="text-muted fw-bold">Інгредієнти:</small>
+                                                    <ul className="list-unstyled mt-1 mb-0">
+                                                        {r.ingredients.map((ing: any, i: number) => (
+                                                            <li key={i} className="small d-flex justify-content-between">
+                                                                <span>{ing.name}</span>
+                                                                <span className="text-muted">{ing.gramsInPortion * portion}г — {Math.round(ing.calories100 * ing.gramsInPortion * portion / 100)} ккал</span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            <div className="p-2 border rounded bg-light mb-2">
+                                                <small className="text-muted fw-bold">На {portion} порц.:</small>
+                                                <div className="d-flex gap-1 flex-wrap mt-1">
+                                                    <span className="badge bg-warning text-dark">{Math.round(r.caloriesPer100 * portion)} ккал</span>
+                                                    <span className="badge border text-dark">Б: {Math.round(r.bilkyPer100 * portion)}г</span>
+                                                    <span className="badge border text-dark">Ж: {Math.round(r.zhyryPer100 * portion)}г</span>
+                                                    <span className="badge border text-dark">В: {Math.round(r.vuglevodyPer100 * portion)}г</span>
+                                                </div>
                                             </div>
 
                                             <div className="p-2 border rounded bg-light">
                                                 <div className="row g-1 mb-2">
-
+                                                    <div className="col-5">
+                                                        <label className="form-label small mb-1">Порцій:</label>
+                                                        <input type="number" className="form-control form-control-sm" min={1} max={10} value={portion} onChange={e => setPortions(prev => ({
+                                                             ...prev, [r._id]: Number(e.target.value) }))} />
+                                                    </div>
                                                     <div className="col-7">
+                                                        <label className="form-label small mb-1">Прийом їжі:</label>
                                                         <select className="form-select form-select-sm"
-                                                            value={current.foodType}
-                                                            onChange={e => handleSelectionChange(r._id, 'foodType', e.target.value)}>
+                                                            value={current.foodType} onChange={e => handleSelectionChange(r._id, 'foodType', e.target.value)}>
                                                             <option value="snidanok">Сніданок</option>
                                                             <option value="obid">Обід</option>
                                                             <option value="vecherya">Вечеря</option>
@@ -198,14 +226,15 @@ const Recipes = () => {
                                                     </div>
                                                 </div>
                                                 <button className="btn btn-sm btn-outline-success w-100" onClick={() => addRecipeToDiary(r._id)}>
-                                                    Додати в щоденник
+                                                    Додати в щоденник 
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             );
-                        })}
+                        }
+                    )}
                 </div>
 
                 {showCreate && (
@@ -213,7 +242,7 @@ const Recipes = () => {
                         <div className="modal-dialog modal-lg">
                             <div className="modal-content">
                                 <form onSubmit={handleCreateRecipe}>
-                                    <div className="modal-header"><h5>Створення рецепта (на 100 грам)</h5></div>
+                                    <div className="modal-header"><h5>Створення рецепта (на 1 порцію)</h5></div>
                                     <div className="modal-body">
                                         <input type="text" className="form-control mb-3" placeholder="Назва страви" required
                                             onChange={e => setNewRecipe({ ...newRecipe, name: e.target.value })} />
@@ -227,6 +256,7 @@ const Recipes = () => {
                                                     <div className="col-2"><input type="number" className="form-control form-control-sm" placeholder="Б" onChange={e => handleInputChange(index, 'bilky100', Number(e.target.value))} /></div>
                                                     <div className="col-2"><input type="number" className="form-control form-control-sm" placeholder="Ж" onChange={e => handleInputChange(index, 'zhyry100', Number(e.target.value))} /></div>
                                                     <div className="col-2"><input type="number" className="form-control form-control-sm" placeholder="В" onChange={e => handleInputChange(index, 'vuglevody100', Number(e.target.value))} /></div>
+                                                    <div className="col-3"><input type="number" className="form-control form-control-sm" placeholder="Грам у порції" onChange={e => handleInputChange(index, 'gramsInPortion', Number(e.target.value))} /></div>
                                                 </div>
                                             </div>
                                         ))}

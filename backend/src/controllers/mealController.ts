@@ -41,22 +41,21 @@ export const addMealRecord = async (req: UserAuthRequest, res: Response) => {
 
 export const addRecipeToDiary = async (req: UserAuthRequest, res: Response) => {
     try {
-        const { recipeId, grams, FoodType } = req.body;
+        const { recipeId, FoodType, portions } = req.body;
         const recipe = await Recipe.findById(recipeId);
         if (!recipe) {
             return res.status(404).json({ message: "рецепт не знайдено" });
         }
 
-        const factor = grams / 100;
         const novyjZapys = new MealRecord({
             userId: req.userId,
             FoodType,
             recipeId: recipe._id,
-            grams,
-            calculatedCalories: Math.round(recipe.caloriesPer100 * factor),
-            calculatedBilky: Math.round(recipe.bilkyPer100 * factor),
-            calculatedZhyry: Math.round(recipe.zhyryPer100 * factor),
-            calculatedVuglevody: Math.round(recipe.vuglevodyPer100 * factor)
+            portions,
+            calculatedCalories: Math.round(recipe.caloriesPer100 * portions),
+            calculatedBilky: Math.round(recipe.bilkyPer100 * portions),
+            calculatedZhyry: Math.round(recipe.zhyryPer100 * portions),
+            calculatedVuglevody: Math.round(recipe.vuglevodyPer100 * portions)
         });
         await novyjZapys.save();
 

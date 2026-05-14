@@ -11,13 +11,9 @@ const AdminProfile = () => {
     const [userRole, setUserRole] = useState('');
 
     const [adminStats, setAdminStats] = useState({
-        food: {
-            Created: 0
-        },
-        recipe: {
-            Created: 0,
-            Approved: 0
-        }
+        CreatedFood: 0,
+        approvedRecipes: 0,
+        CreatedRecipes: 0
     });
 
     const [message, setMessage] = useState({
@@ -43,10 +39,11 @@ const AdminProfile = () => {
 
             if (response.ok) {
                 const data = await response.json();
+                const user = data.user; 
 
-                setLogin(data.login || '');
-                setEmail(data.email || '');
-                setUserRole(data.UserRole || '');
+                setLogin(user.login || '');
+                setEmail(user.email || '');
+                setUserRole(user.userRole || '');
             }
 
             if (resStat.ok) {
@@ -187,7 +184,7 @@ const AdminProfile = () => {
                                     <div className="card-body">
                                         <h6>Food Created</h6>
                                         <h3>
-                                            {adminStats.food?.Created ?? 0}
+                                            {adminStats.CreatedFood ?? 0}
                                         </h3>
                                     </div>
                                 </div>
@@ -199,7 +196,7 @@ const AdminProfile = () => {
                                         <h6>Recipes Created</h6>
 
                                         <h3>
-                                            {adminStats.recipe?.Created ?? 0}
+                                            {adminStats.CreatedRecipes ?? 0}
                                         </h3>
                                     </div>
                                 </div>
@@ -211,7 +208,7 @@ const AdminProfile = () => {
                                         <h6>Recipes Approved</h6>
 
                                         <h3>
-                                            {adminStats.recipe?.Approved ?? 0}
+                                            {adminStats.approvedRecipes ?? 0}
                                         </h3>
                                     </div>
                                 </div>

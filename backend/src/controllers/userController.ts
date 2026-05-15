@@ -21,12 +21,13 @@ export const updateProfile = async (req: UserAuthRequest, res: Response) => {
     try {
         const userId = req.userId;
         const { 
-            email, password, vaga, zrist, vik, stat, 
+            login, email, password, vaga, zrist, vik, stat, 
             activity, goal, calories, bilky, zhyry, vuglevody 
         } = req.body;
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'користувача не знайдено' });
         if (email) user.email = email;
+        if (login) user.login = login;
 
         user.vaga = vaga || user.vaga;
         user.zrist = zrist || user.zrist;

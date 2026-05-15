@@ -191,7 +191,7 @@ const Profile = () => {
                     </div>
 
                     <div className="card p-4 shadow-sm bg-success text-white">
-                        <h5 className="fw-bold mb-3">Денна норма КДЖВ</h5>
+                        <h5 className="fw-bold mb-3">Денна норма КБЖВ</h5>
                         <div className="mb-3">
                             <label htmlFor="kcal" className="form-label small opacity-75">Калорії</label>
                             <input id="kcal" type="number" className="form-control form-control-lg bg-white"value={kaloriyi} onChange={e => setKaloriyi(Number(e.target.value))} />

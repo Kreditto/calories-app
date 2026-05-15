@@ -19,10 +19,6 @@ const Home = () => {
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [editData, setEditData] = useState<{ id: string, grams: number } | null>(null);
 
-    const [newFood, setNewFood] = useState({
-        name: '', caloriesPer100: 0, bilkyPer100: 0, zhyryPer100: 0, vuglevodyPer100: 0
-    });
-
     const headers = useMemo(() => ({
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
@@ -67,7 +63,7 @@ const Home = () => {
             }
             if (resHistory.ok) {
                 const historyData = await resHistory.json();
-                setIstoriya(Array.isArray(historyData) ? historyData : historyData.history || []);
+                setIstoriya(historyData.istoriya);
             }
         } catch (err) {
             console.error(err);
@@ -92,20 +88,6 @@ const Home = () => {
         if (res.ok) {
             resetForm();
             downloadDani();
-        }
-    };
-
-    const handleAddCustomFood = async () => {
-        if (!newFood.name || newFood.caloriesPer100 < 0) return;
-        const res = await fetch('http://localhost:5000/api/food/add', {
-            method: 'POST', 
-            headers, 
-            body: JSON.stringify(newFood)
-        });
-        if (res.ok) {
-            setShowModal(false);
-            setSearchTerm(newFood.name);
-            setNewFood({ name: '', caloriesPer100: 0, bilkyPer100: 0, zhyryPer100: 0, vuglevodyPer100: 0 });
         }
     };
 
@@ -235,9 +217,6 @@ const Home = () => {
                         <button className="btn btn-success flex-grow-1 fw-bold" onClick={dodatyYizhu}>Додати</button>
                         <button className="btn btn-outline-secondary" onClick={resetForm} aria-label="Скинути форму"> ✕ </button>
                     </div>
-                    <button className="btn btn-link btn-sm mt-3 text-secondary" onClick={() => setShowModal(true)}>
-                        + Немає в списку? Додати свій продукт
-                    </button>
                 </div>
 
                 <h3 className="mb-3 text-secondary">Сьогоднішнє меню</h3>
@@ -298,40 +277,6 @@ const Home = () => {
                     }
                 </div>
             </div>
-
-            {showModal && (
-                <div className="custom-modal-overlay shadow" role="dialog">
-                    <div className="custom-modal-content card shadow-lg p-4">
-                        <h4 className="text-success mb-3">Новий продукт (на 100г у сирому виді)</h4>
-                        <div className="mb-2">
-                            <label className="form-label small">Назва</label>
-                            <input className="form-control" value={newFood.name} onChange={e => setNewFood({...newFood, name: e.target.value})} />
-                        </div>
-                        <div className="row g-2 mb-3">
-                            <div className="col-6">
-                                <label className="form-label small">Ккал</label>
-                                <input type="number" className="form-control" value={newFood.caloriesPer100} onChange={e => setNewFood({...newFood, caloriesPer100: Number(e.target.value)})} />
-                            </div>
-                            <div className="col-6">
-                                <label className="form-label small">Білки</label>
-                                <input type="number" className="form-control" value={newFood.bilkyPer100} onChange={e => setNewFood({...newFood, bilkyPer100: Number(e.target.value)})} />
-                            </div>
-                            <div className="col-6">
-                                <label className="form-label small">Жири</label>
-                                <input type="number" className="form-control" value={newFood.zhyryPer100} onChange={e => setNewFood({...newFood, zhyryPer100: Number(e.target.value)})} />
-                            </div>
-                            <div className="col-6">
-                                <label className="form-label small">Вуглеводи</label>
-                                <input type="number" className="form-control" value={newFood.vuglevodyPer100} onChange={e => setNewFood({...newFood, vuglevodyPer100: Number(e.target.value)})} />
-                            </div>
-                        </div>
-                        <div className="d-flex gap-2">
-                            <button className="btn btn-success w-100" onClick={handleAddCustomFood}>Створити</button>
-                            <button className="btn btn-light w-100" onClick={() => setShowModal(false)}>Скасувати</button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {deleteId && (
                 <div className="custom-modal-overlay shadow">

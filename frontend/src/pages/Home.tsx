@@ -14,10 +14,9 @@ const Home = () => {
     const [sumaKaloriy, setSumaKaloriy] = useState(0);
     const [calories, setCalories] = useState(0);
     const [istoriya, setIstoriya] = useState<any[]>([]); 
-
-    const [showModal, setShowModal] = useState(false);
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [editData, setEditData] = useState<{ id: string, grams: number } | null>(null);
+    const [editDataRep, setEditDataRep] = useState<{ id: string, portions: number } | null>(null);
 
     const headers = useMemo(() => ({
             'Content-Type': 'application/json',
@@ -114,6 +113,21 @@ const Home = () => {
         });
         if (res.ok) {
             setEditData(null);
+            downloadDani();
+        }
+    };
+
+    const saveEditRep = async () => {
+        if (!editDataRep || editDataRep.portions <= 0) return;
+        const res = await fetch(`http://localhost:5000/api/meals/${editDataRep.id}`, {
+            method: 'PUT', 
+            headers, 
+            body: JSON.stringify({ 
+                portions: editDataRep.portions 
+            })
+        });
+        if (res.ok) {
+            setEditDataRep(null);
             downloadDani();
         }
     };
@@ -241,16 +255,26 @@ const Home = () => {
                                         {meals.map(z => (
                                             <tr key={z._id} className="border-bottom">
                                                 <td className="w-50">{z.foodId?.name || z.recipeId?.name}</td>
-                                                {z.recipeId 
-                                                    ? `${z.portions} порц.` 
-                                                    : `${z.grams}г`
-                                                }
+                                                <td>   
+                                                    {z.recipeId 
+                                                        ? `${z.portions} порц.` 
+                                                        : `${z.grams}г`
+                                                    }
+                                                </td>
                                                 <td>{z.calculatedVuglevody} Вуглеводів</td>
                                                 <td>{z.calculatedBilky} Білків</td>
                                                 <td>{z.calculatedZhyry} Жирів</td>
                                                 <td className="fw-bold text-end">{z.calculatedCalories} ккал</td>
                                                 <td className="text-end">
-                                                    <button className="btn btn-sm btn-link text-primary p-0 me-3" onClick={() => setEditData({ id: z._id, grams: z.grams })}>Ред</button>
+                                                    <button className="btn btn-sm btn-link text-primary p-0 me-3" onClick={() => 
+                                                        { if (z.recipeId) {
+                                                            setEditDataRep({ id: z._id, portions: z.portions });
+                                                        } else {
+                                                            setEditData({ id: z._id, grams: z.grams });
+                                                        }
+                                                    }}>
+                                                        Ред
+                                                    </button>
                                                     <button className="btn btn-sm btn-link text-danger p-0" onClick={() => setDeleteId(z._id)}>Вид</button>
                                                 </td>
                                             </tr>
@@ -303,6 +327,24 @@ const Home = () => {
                         <div className="d-flex gap-2 justify-content-center">
                             <button className="btn btn-primary w-50" onClick={saveEdit}>Зберегти</button>
                             <button className="btn btn-light w-50" onClick={() => setEditData(null)}>Скасувати</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {editDataRep && (
+                <div className="custom-modal-overlay shadow">
+                    <div className="custom-modal-content card p-4 text-center">
+                        <h4 className="mb-3">Змінити кількість порцій</h4>
+                        <input 
+                            type="number" 
+                            className="form-control mb-4" 
+                            value={editDataRep.portions} 
+                            onChange={e => setEditDataRep({ ...editDataRep, portions: Number(e.target.value) })}
+                        />
+                        <div className="d-flex gap-2 justify-content-center">
+                            <button className="btn btn-primary w-50" onClick={saveEditRep}>Зберегти</button>
+                            <button className="btn btn-light w-50" onClick={() => setEditDataRep(null)}>Скасувати</button>
                         </div>
                     </div>
                 </div>
